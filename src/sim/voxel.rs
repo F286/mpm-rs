@@ -12,5 +12,13 @@ impl<const N: usize> Voxel<N> {
     pub fn is_full(&self) -> bool {
         self.particles.len() >= self.particles.capacity()
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.particles.len() == 0
+    }
+
+    pub fn remove(&mut self, idx: usize) -> Option<Particle> {
+        self.particles.swap_remove(idx)
+    }
 }
 
