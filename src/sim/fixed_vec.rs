@@ -33,8 +33,36 @@ impl<T, const N: usize> FixedVec<T, N> {
         }
     }
 
+    pub fn get_mut(&mut self, idx: usize) -> Option<&mut T> {
+        if idx < self.len {
+            // SAFETY: index checked
+            Some(unsafe { &mut *self.data[idx].as_mut_ptr() })
+        } else {
+            None
+        }
+    }
+
+    pub fn swap_remove(&mut self, idx: usize) -> Option<T> {
+        if idx < self.len {
+            // SAFETY: idx checked
+            let value = unsafe { self.data[idx].assume_init_read() };
+            self.len -= 1;
+            if idx != self.len {
+                let last = unsafe { self.data[self.len].assume_init_read() };
+                self.data[idx].write(last);
+            }
+            Some(value)
+        } else {
+            None
+        }
+    }
+
     pub fn iter(&self) -> FixedVecIter<'_, T, N> {
         FixedVecIter { vec: self, index: 0 }
+    }
+
+    pub fn iter_mut(&mut self) -> FixedVecIterMut<'_, T, N> {
+        FixedVecIterMut { vec: self, index: 0 }
     }
 }
 
@@ -58,6 +86,25 @@ impl<'a, T, const N: usize> Iterator for FixedVecIter<'a, T, N> {
             let item = self.vec.get(self.index);
             self.index += 1;
             item
+        } else {
+            None
+        }
+    }
+}
+
+pub struct FixedVecIterMut<'a, T, const N: usize> {
+    vec: &'a mut FixedVec<T, N>,
+    index: usize,
+}
+
+impl<'a, T, const N: usize> Iterator for FixedVecIterMut<'a, T, N> {
+    type Item = &'a mut T;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.index < self.vec.len {
+            let idx = self.index;
+            self.index += 1;
+            // SAFETY: index checked and mutable iteration guarantees unique access
+            Some(unsafe { &mut *self.vec.data[idx].as_mut_ptr() })
         } else {
             None
         }

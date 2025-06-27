@@ -10,7 +10,7 @@ The code currently provides:
 - `Voxel` – a container for particles within a single cell
 - `SparseGrid` – a hash‑map based sparse voxel grid
 
-`main.rs` shows a tiny demonstration inserting particles into the grid.
+`main.rs` now provides a simple interactive simulation you can run with `cargo run`. The grid is printed as ASCII art and you can step the simulation or add new particles at runtime.
 
 ## Why Sparse Voxels?
 

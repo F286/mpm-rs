@@ -3,3 +3,4 @@ pub mod particle;
 pub mod fixed_vec;
 pub mod voxel;
 pub mod sparse_grid;
+pub mod simulation;

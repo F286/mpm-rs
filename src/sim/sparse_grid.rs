@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use super::{particle::Particle, voxel::Voxel};
 
 pub struct SparseGrid<const N: usize> {
-    voxels: HashMap<(i32, i32, i32), Voxel<N>>,
+    pub(crate) voxels: HashMap<(i32, i32, i32), Voxel<N>>,
 }
 
 impl<const N: usize> SparseGrid<N> {
@@ -25,7 +25,23 @@ impl<const N: usize> SparseGrid<N> {
         self.voxels.get(&key)
     }
 
+    pub fn voxel_mut(&mut self, key: (i32, i32, i32)) -> Option<&mut Voxel<N>> {
+        self.voxels.get_mut(&key)
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = (&(i32, i32, i32), &Voxel<N>)> {
+        self.voxels.iter()
+    }
+
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = (&(i32, i32, i32), &mut Voxel<N>)> {
+        self.voxels.iter_mut()
+    }
+
     pub fn voxel_count(&self) -> usize {
         self.voxels.len()
+    }
+
+    pub fn remove_voxel(&mut self, key: (i32, i32, i32)) {
+        self.voxels.remove(&key);
     }
 }
